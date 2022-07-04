@@ -1,22 +1,24 @@
-﻿namespace csharp_banca_oop
-{
-    internal class Cliente
-    {
-        public string Nome { get; set; }
-        public string Cognome { get; set; }
-        public string CodiceFiscale { get; set; }
-        public int Stipendio { get; set; }
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-        public Cliente(string nome,string Cognome, string CodiceFiscale)
+namespace csharp_banca_oop
+{
+    public class Cliente
+    {
+        public string nome { get; set; }
+        public string cognome { get; set; }
+        public string codiceFiscale { get; private set; }
+        public int stipendio;
+
+        public Cliente(string nome, string cognome, string codiceFiscale, int stipendio)
         {
-            this.Nome = nome;
-            this.Cognome = Cognome;
-            this.CodiceFiscale = CodiceFiscale;
-        }
-        internal void Stampa()
-        {
-          
-            Console.WriteLine($"\t Nome : {this.Nome} \t Cognome : {this.Cognome} \t Codice Fiscale : {this.CodiceFiscale}");
+            this.nome = nome;
+            this.cognome = cognome;
+            this.codiceFiscale = codiceFiscale;
+            this.stipendio = stipendio;
         }
     }
 }

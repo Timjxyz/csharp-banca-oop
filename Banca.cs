@@ -6,77 +6,129 @@ using System.Threading.Tasks;
 
 namespace csharp_banca_oop
 {
-    internal class Banca
+    public class Banca
     {
-        public string Nome { get; set; }   
-        List<Cliente> clienti;
-        List<Prestito> prestiti;
+        public string Nome { get; set; }
 
-        public Banca (string nome)
+        public List<Cliente> clienti = new List<Cliente>();
+        public List<Prestito> prestiti = new List<Prestito>();
+
+
+        public void AggiungiCliente(Cliente cliente)
         {
-            this.Nome = nome;
-            clienti = new List<Cliente> (); 
-            prestiti = new List<Prestito> ();   
-        }
-
-
-        public void StampaNomeBanca()
-        {
-             Console.WriteLine("\t Benvenuto in "+this.Nome);
-        }
-        
-
-        public void NuovoCliente(Cliente cliente)
-        {
-            clienti.Add(cliente);
-        }
-
-       
-
-        public static Cliente CreaCliente()
-        {
-            Banca.StampaTitolo("Creazione nuovo cliente", "Inserisci i dati cliente.");
-          
-            Console.WriteLine("\t Inserisci il nome ");
-            string nome= Console.ReadLine();
-            Console.WriteLine("\t Inserisci il cognome ");
-            string cognome = Console.ReadLine();
-            Console.WriteLine("\t Inserisci il Codice Fiscale ");
-            string codiceFiscale = Console.ReadLine();
-            
-            Cliente nuovo = new Cliente(nome, cognome, codiceFiscale);
            
-            return nuovo;
+            this.clienti.Add(cliente);
         }
-       
-        internal void StampaListaClienti()
+
+        //metodo per stampare la lista dei clienti
+        public void stampaClienti()
         {
-            Banca.StampaTitolo("Lista clienti","");
-            int pos = 1;
-            foreach (Cliente cliente in clienti)
+            Console.WriteLine("");
+            Console.WriteLine("\t**** Lista clienti ****");
+            Console.WriteLine("");
+            foreach (Cliente cliente in this.clienti)
             {
-                Console.WriteLine("\t"+pos + ")");
-                cliente.Stampa();
-                pos++;
-            }   
-        }
-
-        public static  void StampaTitolo(string titolo, string sottotitolo)
-        {
-            
-            Console.WriteLine("\t****{0}****", titolo);
-            Console.WriteLine();
-            Console.WriteLine("\t"+"**"+sottotitolo+"**");
+                Console.WriteLine($"Nome: {cliente.nome} \t Cognome: {cliente.cognome} \t Codice Fiscale: {cliente.codiceFiscale}");
+            }
             Console.WriteLine();
         }
-        internal static int RichiediCliente()
+
+        //metodo per stampare lista di prestiti 
+        public void stampaPrestiti(List<Prestito> prestiti)
         {
-            Console.WriteLine("\t Inserisci codice cliente: ");
-            int numCliente = int.Parse(Console.ReadLine());
-            return numCliente;
+            foreach (Prestito prestito in prestiti)
+            {
+                Console.WriteLine($"Prestito n. {prestito.ID} Intestato a: {prestito.intestatario.nome} {prestito.intestatario.cognome} totale {prestito.ammontare}€ da pagare in {prestito.rata} rate");
+            }
+            Console.WriteLine();
         }
 
+        //metodo modifica cliente
+        public void ModificaCliente(string vecchioCf, Cliente nuovoCliente)
+        {
+            foreach (Cliente cliente in this.clienti)
+            {
+                if (cliente.codiceFiscale == vecchioCf)
+                {
+                    this.clienti.Remove(cliente);
+                    this.clienti.Add(nuovoCliente);
+                    Console.WriteLine();
+                    Console.WriteLine("I dati del cliente {0} sono stati modificati correttamente", nuovoCliente.nome);
+                    Console.WriteLine("");
+                    Console.WriteLine("\t***********************");
+                    Console.WriteLine("\tLista clienti aggiornata");
+                    Console.WriteLine("\t***********************");
+                    Console.WriteLine("");
+                    this.stampaClienti();
+                    return;
+                }
+            }
 
-        
+        }
+
+        //Metodo per cercare prestiti cliente tramite codice fiscale
+        public Cliente cercaCliente(string cercaCodiceFiscale)
+        {
+
+            foreach (Cliente cliente in this.clienti)
+            {
+                if (cliente.codiceFiscale == cercaCodiceFiscale)
+                {
+                    Console.WriteLine("\t**** Ricerca avvenuta con successo ****");
+                    Console.WriteLine("\tElenco prestiti attivi");
+                    
+                    return cliente;
+                }
+                
+                
+            }
+
+            Console.WriteLine("\tRicerca fallita");
+            Console.WriteLine("\tNessun utente trovato");
+            Console.WriteLine("\tRicontrolla i dati inseriti");
+            return null;
+
+        }
+
+        //metodo per visualizzare lista prestiti
+        public List<Prestito> VisualizzaPrestiti(Cliente intestatario)
+        {
+            List<Prestito> prestitiCliente = new List<Prestito>();
+            foreach (Prestito prestito in this.prestiti)
+            {
+                if (prestito.intestatario == intestatario)
+                {
+                    prestitiCliente.Add(prestito);
+                }
+            }
+            return prestitiCliente;
+        }
+        //metodo aggiungi nuovo prestito
+        public void aggiungiNuovoPrestito(Cliente intestatario, int ammontare, int rata, DateTime inizio, DateTime fine)
+        {
+            if (this.clienti.Contains(intestatario))
+            {
+                this.prestiti.Add(new Prestito(intestatario, ammontare, rata, inizio, fine));
+            }
+            else
+            {
+                Console.WriteLine("Spiacente, l'utente non è registrato alla piattaforma");
+            }
+        }
+        //metodo per totale somma prestito
+        public double sommaPrestiti(Cliente cliente)
+        {
+            double totale = 0;
+
+            foreach (Prestito prestito in this.prestiti)
+            {
+                if (prestito.intestatario == cliente)
+                {
+                    totale += prestito.ammontare;
+                }
+            }
+
+            return totale;
+        }
     }
 }
